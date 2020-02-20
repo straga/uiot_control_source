@@ -354,7 +354,7 @@ class FtpDataClient:
         port_id = False
 
         try:
-            port_id = self.port_id[0]
+            port_id = self.port_id.pop(0)
         except Exception as e:
             log.debug("port_id {}".format(e))
             pass
