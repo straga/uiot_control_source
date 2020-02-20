@@ -1,0 +1,21 @@
+{
+  "board_cfg-01": {
+    "_schema" : "board_cfg",
+    "name": "ESP32",
+    "board": "DEVKIT",
+    "hostname": "devkit.local",
+    "uid": "3423FGG234324",
+    "topic": "dev/pc_dev",
+    "init": 0
+  },
+
+  "board_cfg-02": {
+    "_schema" : "board_cfg",
+    "name": "ESP32_2",
+    "board": "DEVKIT_2",
+    "hostname": "devkit.local",
+    "uid": "3423FGG234324",
+    "topic": "dev/pc_dev"
+  }
+
+}

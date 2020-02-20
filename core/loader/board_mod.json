@@ -1,0 +1,13 @@
+{
+"data": {
+  "_schema" : "_schema",
+  "name": "board_mod",
+  "sch": [
+      ["name", ["str",""] ],
+      ["active", ["bool", false] ],
+      ["status", ["str", ""] ],
+      ["seq", ["int", 100] ],
+      ["depend", ["list", []]]
+    ]
+  }
+}

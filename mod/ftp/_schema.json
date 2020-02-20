@@ -1,0 +1,16 @@
+{
+  "ftp_cfg": {
+    "_schema" : "_schema",
+    "name": "ftp_cfg",
+    "sch": [
+        ["name", ["str","default"] ],
+        ["cport", ["int", 25] ],
+        ["dport", ["int", 26]],
+        ["usr", ["str", ""]],
+        ["passwd", ["str", ""]],
+        ["anonym", ["bool", false]],
+        ["active", ["bool", true]]
+    ]
+  }
+
+}

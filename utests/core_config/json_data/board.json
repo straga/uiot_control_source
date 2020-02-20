@@ -1,0 +1,41 @@
+{
+  "_schema-0": {
+    "_schema" : "_schema",
+    "name": "board_cfg",
+    "sch": [
+              ["name", ["str",""] ],
+              ["board", ["str", ""] ],
+              ["hostname", ["str", ""]],
+              ["uid", ["str", ""]],
+              ["topic", ["str", ""]],
+              ["init",["int", 0]]
+    ]
+  },
+
+
+  "_schema-1": {
+    "_schema" : "_schema",
+    "name": "board_mod",
+    "sch": [
+              ["name", ["str",""] ],
+              ["active", ["bool", false] ],
+              ["status", ["str", ""] ],
+              ["seq", ["int", 100] ]
+    ]
+
+    },
+
+    "_schema-2": {
+      "_schema" : "_schema",
+      "_upd": true,
+      "name": "test_mod",
+      "sch": [
+              ["name", ["str",""] ],
+              ["active", ["bool", false] ],
+              ["status", ["str", ""] ],
+              ["hope", ["str", ""] ],
+              ["seq", ["int", 100] ]
+      ]
+      }
+
+}

@@ -1,0 +1,15 @@
+{
+  "_sch_0": {
+    "_schema" : "_schema",
+    "name": "board_cfg",
+    "sch": [
+              ["name", ["str",""] ],
+              ["board", ["str", ""] ],
+              ["hostname", ["str", ""]],
+              ["uid", ["str", ""]],
+              ["topic", ["str", ""]],
+              ["init",["int", 0]]
+    ]
+  }
+
+}

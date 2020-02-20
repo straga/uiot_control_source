@@ -1,0 +1,21 @@
+{
+
+  "board_mod-01": {
+    "_schema" : "board_mod",
+    "name": "net",
+    "seq": 1
+
+  },
+
+  "board_mod-02": {
+    "_schema" : "board_mod",
+    "name": "mqtt",
+    "seq": 2
+  },
+
+  "board_mod-03": {
+    "_schema" : "board_mod",
+    "name": "ftp",
+    "seq": 3
+  }
+}

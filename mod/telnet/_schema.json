@@ -1,0 +1,12 @@
+{
+  "ftp_cfg": {
+    "_schema" : "_schema",
+    "name": "telnet_cfg",
+    "sch": [
+        ["name", ["str","default"] ],
+        ["port", ["int", 23] ],
+        ["pswd", ["str", ""]]
+    ]
+  }
+
+}
