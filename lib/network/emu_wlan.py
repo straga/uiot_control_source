@@ -9,7 +9,10 @@ class WLAN:
         self.enable = False
 
 
-    def active(self, active):
+    def active(self, active=None):
+        if active is None:
+            return self.enable
+
         self.enable = active
 
 

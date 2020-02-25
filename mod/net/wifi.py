@@ -30,9 +30,9 @@ class WIFIRun:
         if not self.sta.ip and not self.ap:
             self.ap = AP(core=self.core)
             launch(self.ap.start, "")
-        elif self.ap and self.ap.active:
+        elif self.ap and self.ap.net.active():
             self.ap.stop()
-        elif self.ap and self.ap.active is None:
+        elif self.ap and not self.ap.net.active():
             self.ap = None
 
 
@@ -72,49 +72,48 @@ class AP:
 
         self.net = network.WLAN(network.AP_IF)
         self.ip = None
-        self.active = False
         self.delay = 120
+        self.stop_progres = False
 
 
 
     async def start(self):
 
-        self.delay = True
-
         if not self.ip:
-
+            self.net.active(True)
             config = await self.uconf.call("select", "wifi_ap_cfg", rtype="obj", active=True)
 
             log.debug("AP CONFIG: {}".format(config.name))
 
             if config:
-                self.net.active(True)
-
-                if len(config.password) < 8:
-                    log.error("AP psswd < len: 8")
-                    return
                 try:
                     self.net.config(essid=config.essid, password=config.password, authmode=config.authmode,
                                     channel=config.channel)
+                    self.delay = config.delay
+                    self.ip = self.net.ifconfig()[0]
+                    self.mbus.pub_h("wifi/ap/ip/set", self.ip)
+                    self.mbus.pub_h("module", "net")
+
                 except Exception as e:
                     log.error("AP CONFIG: {}".format(e))
+                    self.net.active(False)
                     return
-                self.delay = config.delay
-                self.ip = self.net.ifconfig()[0]
-                self.mbus.pub_h("wifi/ap/ip/set", self.ip)
-                self.mbus.pub_h("module", "net")
+
+
 
 
     async def _stop(self):
+        self.stop_progres = True
         await asyncio.sleep(self.delay)
         self.ip = None
         self.net.active(False)
-        self.delay = False
         self.mbus.pub_h("wifi/ap/ip/set", None)
+        self.stop_progres = False
 
 
     def stop(self):
-        launch(self._stop, "")
+        if not self.stop_progres:
+            launch(self._stop, "")
 
 
 
@@ -148,6 +147,7 @@ class STA:
             self.ip = None
             self.mbus.pub_h("wifi/sta/ip/set", self.ip)
 
+
         configs = await self.uconf.call("select", "wifi_sta_cfg", active=True)
 
         if configs:
@@ -177,6 +177,7 @@ class STA:
             if ip != self.ip:
                 self.ip = ip
                 self.mbus.pub_h("wifi/sta/ip/set", self.ip)
+                self.mbus.pub_h("module", "net_sta")
         else:
             self.loss += 1
             sleep = 1

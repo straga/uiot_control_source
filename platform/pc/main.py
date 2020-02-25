@@ -19,21 +19,6 @@ log = logging.getLogger('MAIN')
 logging.basicConfig(level=logging.DEBUG)
 
 
-# from core.umod.config import uTable
-#
-# class MAIN(uTable):
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.part_name = "."
-#         self.core.mbus.sub_h(uid="MAIN", topic="ALL", env=self.env, func="print_mbus")
-#
-#     def print_mbus(self, *msg):
-#         print("MAIN: {}".format(msg))
-#
-# g_core.env["main"] = MAIN(tb_name="cfg_main", env="main", core=g_core)
-
-
 async def loader(core_mbus, core_conf):
 
     from core.loader.loader import uCore
@@ -105,19 +90,19 @@ def clean_emu():
 if __name__ == '__main__':
     log.info("MAIN")
 
-    log = logging.getLogger("FJSON")
-    log.setLevel(logging.DEBUG)
-
-
-    log = logging.getLogger("CONF")
-    log.setLevel(logging.DEBUG)
-
-
-    log = logging.getLogger("LOADER")
-    log.setLevel(logging.DEBUG)
-
-    log = logging.getLogger("MBUS")
-    log.setLevel(logging.DEBUG)
+    # log = logging.getLogger("FJSON")
+    # log.setLevel(logging.DEBUG)
+    #
+    #
+    # log = logging.getLogger("CONF")
+    # log.setLevel(logging.DEBUG)
+    #
+    #
+    # log = logging.getLogger("LOADER")
+    # log.setLevel(logging.DEBUG)
+    #
+    # log = logging.getLogger("MBUS")
+    # log.setLevel(logging.DEBUG)
 
 
     clean_emu()
