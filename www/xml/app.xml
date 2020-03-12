@@ -1,0 +1,145 @@
+<templates>
+
+<!--    <nav t-name="Navbar" class="navbar navbar-expand-lg navbar-light bg-light" t-on-collapse-menu="collapseMenu" >-->
+<!--      <a class="navbar-brand" href="#">uPy</a>-->
+
+<!--      <MobileMenu/>-->
+
+<!--      <div class="navbar-collapse" id="navbarNav"  t-att-class="state.collapse ? 'collapse' : ''" >-->
+<!--          <ul class="navbar-nav item_list">-->
+<!--              <t t-foreach="visibleMenu" t-as="menu">-->
+<!--                  <li class="nav-item" t-att-menu-id="menu.id" t-key="menu.name" t-att-class="state.active_menu === menu.key ? 'active' : ''">-->
+<!--                      <a class="nav-link" href='#' t-on-click.prevent="toggleMenu(menu.key)"><span class="menu_text"><t t-esc="menu.name"/></span></a>-->
+<!--                  </li>-->
+<!--            </t>-->
+<!--          </ul>-->
+<!--        </div>-->
+<!--        -->
+<!--    </nav>-->
+
+    <nav t-name="Navbar" class="sidebar" t-on-collapse-menu="collapseMenu" t-att-class="props.active_bar === true ? 'active' : ''">
+        <t t-log="props.active_bar"/>
+        <div class="dismiss" t-on-click="collapseBar">
+           <i>Back</i>
+        </div>
+
+        <div class="logo">
+            <h3>
+                <a class="navbar-brand" href="#">uPy</a>
+            </h3>
+        </div>
+
+        <ul class="list-unstyled menu-elements">
+
+            <t t-foreach="visibleMenu" t-as="menu">
+                  <li class="nav-item" t-att-menu-id="menu.id" t-key="menu.name" t-att-class="state.active_menu === menu.key ? 'active' : ''">
+
+                      <a class="nav-link" href='#' t-on-click.prevent="toggleMenu(menu)">
+                          <span class="menu_text">
+                              <t t-esc="menu.name"/>
+                          </span>
+                      </a>
+
+                      <ul t-foreach="subMenu(menu.key)" t-as="submenu" class="list-unstyled" t-key="menu.name" t-att-class="state.active_menu === menu.key ? ' ' : 'collapse'">
+                            <t t-log="submenu"/>
+                          <li t-att-menu-id="submenu.id" t-key="submenu.name">
+                            <a class="scroll-link" href="#" t-on-click.prevent="toggleMenu(submenu)">
+                                <t t-esc="submenu.name"/>
+                            </a>
+                          </li>
+
+                      </ul>
+
+                  </li>
+            </t>
+        </ul>
+    </nav>
+
+
+
+    <footer t-name="Footer" class="bg-secondary text-white mt-4">
+        <div class="container-fluid py-3">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Footer</h5></div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">I stay at the bottom of the viewport!
+                    <span class="small"> <br/> Unless the page content pushes me further.</span>
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3 text-right small align-self-end">Upy Board.</div>
+            </div>
+        </div>
+    </footer>
+
+
+    <t t-name="MobileMenu">
+      <button class="navbar-toggler" type="button"
+                t-on-click="toggle"
+                data-toggle="collapse"
+                data-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon collapse_menu"/>
+      </button>
+    </t>
+
+
+    <div t-name="Home" class="bg-light text-dark mt-4">
+        <div class="screen">
+            <h1 class="text-center "><t t-esc="menuText.name"/></h1>
+            <div class="container"></div>
+        </div>
+    </div>
+
+
+    <div t-name="ScreenView" class="screenview" t-att-style="style">
+        <t t-slot="default"/>
+    </div>
+
+
+    <div t-name="ScreenManager" class="window-manager">
+
+        <t t-if="screenList">
+          <t t-log="screenList"/>
+            <ScreenView t-key="screenList.id" info="screenList">
+              <t t-component="screenList.component"/>
+            </ScreenView>
+        </t>
+
+    </div>
+
+
+    <div t-name="App" class="wrapper" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
+
+        <StatusTop/>
+        <Navbar active_bar="state.active_bar" active_screen="state.active_screen"/>
+        <a class="btn btn-primary btn-customized open-menu" href="#" t-on-click.prevent="toggleBar()" role="button">
+            <span>Menu</span>
+        </a>
+        <ScreenManager t-ref="wm"/>
+        <Footer/>
+
+    </div>
+
+<!--     <table t-name="ListView" class="table table-striped" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">-->
+
+
+<!--            <thead class="data_head">-->
+<!--               <tr t-foreach="Head" t-as="record" >-->
+<!--                    <th scope="col"><t t-esc="record"/></th>-->
+<!--              </tr>-->
+
+<!--            </thead>-->
+<!--            <tbody class="data_body"/>-->
+<!--        </table>-->
+
+
+
+
+</templates>

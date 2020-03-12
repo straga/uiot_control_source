@@ -5,7 +5,7 @@ from .mqtt.client import MQTTClient
 
 import logging
 log = logging.getLogger("MQTT")
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 
 class MQTTAction(uLoad):
@@ -20,7 +20,7 @@ class MQTTAction(uLoad):
         if mqtt_cfg and board:
 
             self.client_pub = board.topic
-            self.mqtt = MQTTClient(client_id=self.client_pub, addr=mqtt_cfg.addr, port=mqtt_cfg.port )
+            self.mqtt = MQTTClient(client_id=self.client_pub, addr=mqtt_cfg.addr, port=mqtt_cfg.port)
 
             self.client_sub = "{}/{}".format(self.client_pub, self.brocker_name)
 
@@ -30,8 +30,8 @@ class MQTTAction(uLoad):
             self.sub_h("ALL", "mbus_act")  # short
             # self.mbus.sub_h("MQTT-ALL", "ALL", self.env, "mbus_act") # direct
 
-            # mod mbus
-            self.core.mbus.MQTT = self.MQTT_decode
+            # # mod mbus
+            # self.core.mbus.MQTT = self.MQTT_decode
 
             self.mqtt.start()
             self.mbus.pub_h("module", "mqtt")
@@ -58,10 +58,10 @@ class MQTTAction(uLoad):
             self.mqtt.pub(val)
 
 
-    # MQTT Broker for MBUS
-    def MQTT_decode(self, msg):
-        log.debug("[brk MQTT]: {}".format(msg))
-        msg["pld"] = msg["pld"].decode()
-        return msg
+    # # MQTT Broker for MBUS
+    # def MQTT_decode(self, msg):
+    #     log.debug("[brk MQTT]: {}".format(msg))
+    #     # msg["pld"] = msg["pld"].decode()
+    #     return msg
 
 

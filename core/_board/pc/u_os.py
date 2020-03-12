@@ -1,4 +1,6 @@
 import os
+import gc
+from random import randint
 
 def dir_path(name):
     return name
@@ -79,3 +81,16 @@ def copy_file_obj(src, dest, length=512):
     except OSError as e:
         print("Error: %s - %s." % (e.filename, e.strerror))
         pass
+
+def uname():
+    # (sysname ='esp32',
+    #  nodename='esp32',
+    #  release='1.12.0',
+    #  version='v1.12-188-gd3b2c6e44-dirty on 2020-02-29',
+    #  machine='ANY with ESP32')
+    return ('pcdev', 'pcdev', 'x.xx.x', 'vx.xx-xxx-xxxxx-dirty on YYYY-MM-DD', 'ANY with PCDEV')
+
+
+def mem_info():
+    gc.collect()
+    return [randint(20000, 112000), randint(20000, 112000)]

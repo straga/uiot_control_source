@@ -5,7 +5,7 @@ except ImportError:
     import asyncio
 
 from threading import Thread
-
+import gc
 
 class RunInThread(Thread):
     """
@@ -45,4 +45,6 @@ async def run_in_executer(action, *args, **kwargs):
         await asyncio.sleep(0.05)
 
     return thread.result
+
+
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Viktor Vorobjov
+# Copyright (c) 2020 Viktor Vorobjov
 
 
 try:
@@ -107,9 +107,9 @@ class MbusManager:
                     pass
 
 
-    def local(self, msg):
-        # log.debug("[brk LOCAL] : msg: {}".format(msg))
-        return msg
+    # def local(self, msg):
+    #     # log.debug("[brk LOCAL] : msg: {}".format(msg))
+    #     return msg
 
 
     # consumer
@@ -134,18 +134,31 @@ class MbusManager:
             message = await self.queue.get()
             if message:
                 log.debug("[GET] msg: {}".format(message))
+                self.sub_check(message)
 
-                try:
-                    br_func = getattr(self, message["brk"])
-                except Exception as e:
-                    log.debug("Error: getattr: {}".format(e))
-                    br_func = None
-                    pass
+            else:
+                await asyncio.sleep(0.5)
 
-                if br_func:
-                    self.sub_check(br_func(message))
-
-            await asyncio.sleep(0.3)
+    # async def consumer(self):
+    #
+    #     while True:
+    #         message = await self.queue.get()
+    #         if message:
+    #             log.debug("[GET] msg: {}".format(message))
+    #
+    #             try:
+    #                 br_func = getattr(self, message["brk"])
+    #             except Exception as e:
+    #                 log.debug("Error: getattr: {}".format(e))
+    #                 br_func = None
+    #                 pass
+    #
+    #             if br_func:
+    #                 self.sub_check(br_func(message))
+    #             else:
+    #                 self.sub_check(message)
+    #         else:
+    #             await asyncio.sleep(0.5)
 
     def usub(self, value):
         self._usub.append(value)

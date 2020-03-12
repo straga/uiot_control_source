@@ -9,7 +9,7 @@ except Exception:
 
 import logging
 log = logging.getLogger("WIFI")
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 from core.asyn.asyn import launch
 
@@ -87,7 +87,8 @@ class AP:
 
             if config:
                 try:
-                    self.net.config(essid=config.essid, password=config.password, authmode=config.authmode,
+                    essid = "{}_{}".format(config.ssid, self.mbus.core.board.uid)
+                    self.net.config(essid=essid, password=config.password, authmode=config.authmode,
                                     channel=config.channel)
                     self.delay = config.delay
                     self.ip = self.net.ifconfig()[0]
@@ -127,35 +128,31 @@ class STA:
         self.uconf = self.core.uconf
 
         self.net = network.WLAN(network.STA_IF)
-        self._activate()
+        self.net.active(True)
 
-        self.loss = 0
+        self.loss = 11
         self.ip = None
 
         self._run = False
 
-    def _activate(self):
-
-        self.net.active(True)
-        self.net.config(dhcp_hostname=self.core.board.hostname)
 
     async def connect(self):
-
         self.net.disconnect()
 
         if self.ip is not None:
             self.ip = None
             self.mbus.pub_h("wifi/sta/ip/set", self.ip)
 
-
-        configs = await self.uconf.call("select", "wifi_sta_cfg", active=True)
+        configs = await self.uconf.call("scan_name", "wifi_sta_cfg")
+        log.debug("STA: SSID =  {}".format(configs))
 
         if configs:
-            ap_names = self.scan_ap()
+            ap_names = self.scan_ap(only_name=True)
+            self.net.config(dhcp_hostname=self.core.board.hostname)
             log.debug("STA: ap_names: {}".format(ap_names))
 
             for config in configs:
-                ap_conf = await self.uconf.call("model", "wifi_sta_cfg", config)
+                ap_conf = await self.uconf.call("select_one", "wifi_sta_cfg", config, True)
                 log.debug("STA: SSID =  {}".format(ap_conf.ssid))
 
                 if ap_conf.ssid in ap_names:
@@ -184,41 +181,37 @@ class STA:
 
         return sleep
 
-    def scan_ap(self, slist=False):
+    def scan_ap(self, only_name=False):
 
-        if slist:
             data = []
-            try:
-                for ap in self.net.scan():
-                    val = {
-                        "ssid": ap[0].decode(),
-                        "bssid": "",
-                        "channel": ap[2],
-                        "RSSI": ap[3],
-                        "authmode": ap[4],
-                        "hidden": ap[5]
-                        }
-                    data.append(val)
+            if only_name:
 
-            except Exception as e:
-                log.error("WiFi SCAN AP: {}".format(e))
-                pass
+                try:
+                    for ap in self.net.scan():
+                        data.append(ap[0].decode())
+                except Exception as e:
+                    log.error("scan: {}".format(e))
+                    pass
 
-            return {
-                "head": ("ssid", "bssid", "channel", "RSSI", "authmode", "hidden"),
-                "data": data,
-                "options": "simple"
-            }
-        else:
+            else:
 
-            ap_names = []
-            try:
-                res = self.net.scan()
-                for ap in res:
-                    ap_names.append(ap[0].decode())
-            except Exception as e:
-                log.error("scan: {}".format(e))
-                pass
-            return ap_names
+                try:
+                    for ap in self.net.scan():
+                        val = {
+                            "ssid": ap[0].decode(),
+                            "bssid": "",
+                            "channel": ap[2],
+                            "RSSI": ap[3],
+                            "authmode": ap[4],
+                            "hidden": ap[5]
+                            }
+                        data.append(val)
+
+                except Exception as e:
+                    log.error("scan: {}".format(e))
+                    pass
+
+            return data
+
 
 

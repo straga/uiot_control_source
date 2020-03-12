@@ -127,19 +127,14 @@ class DataStore:
 
         try:
             with open(argument, "wb") as f:
-                log.debug("WB")
+                log.debug("write byte")
 
                 while True:
-                    try:
-                        data = await reader.read(max_chuck_size)
-                        w = f.write(data)
-                        if not data or w < max_chuck_size:
-                            break
-
-                    except Exception as e:
-                        log.error("exception .. {}".format(e))
+                    data = await reader.read(max_chuck_size)
+                    if not data:
+                        log.debug("not more data")
                         break
-
+                    f.write(data)
             request.transfer_rpl = self.check_file(argument)
 
         except OSError as e:
@@ -395,7 +390,7 @@ class FtpDataClient:
 
         await _aclose(writer)
         log.debug("- Data Server <- client from {}".format(addr))
-        log.debug("ps2. Data Server = Close")
+        log.debug("s2. Data Server = Close")
 
 
 class FtpRequest:
@@ -511,6 +506,9 @@ class FTPServer:
 
                 if result is None:
                     await _awrite(writer, "520 not implement.\r\n")
+
+                if not result:
+                    break
 
         if port_id in self.act_client:
             del self.act_client[port_id]

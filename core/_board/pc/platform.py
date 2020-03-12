@@ -33,6 +33,3 @@ async def pc_buffer_writer(awrite, writer, buf, x):
     await awrite(writer, buf, True)
 
 
-
-# _try_alloc_byte_array
-

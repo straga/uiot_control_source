@@ -1,0 +1,26 @@
+{
+  "http_cfg": {
+    "_schema" : "_schema",
+    "name": "http_cfg",
+    "sch": [
+        ["name", ["str",""] ],
+        ["addr", ["str", "0.0.0.0"] ],
+        ["port", ["int", 8080]],
+        ["path", ["str", ""]]
+    ]
+  },
+
+  "http_route_cfg": {
+    "_schema" : "_schema",
+    "name": "http_route_cfg",
+    "sch": [
+        ["name", ["str",""] ],
+        ["route", ["str", ""] ],
+        ["handler", ["str", ""]],
+        ["active", ["bool", false]]
+    ]
+  }
+
+
+}
+

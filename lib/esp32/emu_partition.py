@@ -50,8 +50,8 @@ class Partition:
     def info(self):
         type = Partition.TYPE_DATA
         subtype = 2
-        addr = 5000
-        size = 2000
+        addr = 2359296
+        size = 2252800
         label = "factory"
         encrypted = 0
         return (type, subtype, addr, size, label, encrypted)

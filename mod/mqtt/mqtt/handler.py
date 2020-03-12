@@ -53,7 +53,7 @@ class MQTTHandler:
 
             log.debug('[SUBACK] mid: {} q: {}'.format(mid, get_qos))
             if get_qos[0] == 0:  # 0x00 - Success - Maximum QoS 0 , 0x80 - Failure
-                log.info('[SUBACK] mid: {}'.format(mid))
+                log.debug('[SUBACK] mid: {}'.format(mid))
                 self.connect._ping = 0
 
         #PUBLISH 0x30, 0x31 # _handle_publish_packet , retain and not retain

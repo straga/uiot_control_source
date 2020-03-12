@@ -1,0 +1,39 @@
+{
+
+  "pin": {
+    "_schema" : "pin_cfg",
+    "name": "18",
+    "number": 18,
+    "inverted": false,
+    "mode": "IN",
+    "pull": "PULL_DOWN",
+    "pcb_name": "18"
+  },
+
+  "pin_touch": {
+    "_schema" : "binary_sensor_cfg",
+    "name": "push_left",
+    "pin": "18",
+    "on" : "touch"
+  },
+
+
+  "pin_23": {
+    "_schema" : "pin_cfg",
+    "name": "23",
+    "number": 23,
+    "inverted": false,
+    "mode": "IN",
+    "pull": "PULL_DOWN",
+    "pcb_name": "23"
+  },
+
+  "pin_period_23": {
+    "_schema" : "binary_sensor_cfg",
+    "name": "push_period",
+    "pin": "23",
+    "on" : "period"
+  }
+
+
+}

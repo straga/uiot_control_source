@@ -34,3 +34,19 @@ class Pin_state:
             print(ex)
             return 0
 
+
+    def scan_emu(self):
+
+        try:
+            return uos.listdir(self.path)
+        except OSError as e:
+            print(e)
+            return []
+            pass
+
+    def list_emu(self):
+        _value = {}
+        for scan in self.scan_emu():
+            _value[scan] = self.read_value(scan)
+
+

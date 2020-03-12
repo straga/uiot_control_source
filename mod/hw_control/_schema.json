@@ -1,0 +1,11 @@
+{
+  "_sch_0": {
+    "_schema" : "_schema",
+    "name": "hw_control_pin",
+    "sch": [
+              ["name", ["str",""] ],
+              ["value", ["int", null] ]
+    ]
+  }
+
+}

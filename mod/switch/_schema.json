@@ -1,0 +1,13 @@
+{
+  "_sch_0": {
+    "_schema" : "_schema",
+    "name": "switch_cfg",
+    "sch": [
+              ["name", ["str",""] ],
+              ["pin", ["str", ""]],
+              ["state", ["str", ""]],
+              ["type", ["str", ""]]
+    ]
+  }
+
+}

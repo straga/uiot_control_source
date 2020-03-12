@@ -10,11 +10,27 @@ async def _g():
 type_coro = type(_g())
 
 
-def launch(func, tup_args):
-    res = func(*tup_args)
-    if isinstance(res, type_coro):
-        loop = asyncio.get_event_loop()
-        loop.create_task(res)
+def is_coro(func):
+    if isinstance(func, type_coro):
+        return True
+    return False
+
+
+def launch(func, _args=None, _kwargs=None):
+    if _kwargs is None:
+        _kwargs = {}
+    if _args is None:
+        _kwargs = ()
+
+    try:
+        res = func(*_args, **_kwargs)
+        if isinstance(res, type_coro):
+            loop = asyncio.get_event_loop()
+            loop.create_task(res)
+    except Exception as e:
+        print(e)
+        pass
+
 
 
 class Lock():

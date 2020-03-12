@@ -1,5 +1,6 @@
 
 import logging
+import gc
 
 log = logging.getLogger("LOADER")
 log.setLevel(logging.DEBUG)
@@ -75,6 +76,7 @@ class uCore:
         self.env = uEnv(self).env
 
 
+
 class uModule:
 
     __slots__ = ('mbus', 'uconf', 'core', '_modules')
@@ -85,9 +87,23 @@ class uModule:
         self.mbus = self.core.mbus
         self.uconf = self.core.uconf
 
-        self.uconf.from_file("./core/loader/board_mod.json")
-
+        _schema = '''{
+            "data": {
+                "_schema": "_schema",
+                "name": "board_mod",
+                "sch": [
+                    ["name", ["str", ""]],
+                    ["active", ["bool", false]],
+                    ["status", ["str", ""]],
+                    ["seq", ["int", 100]],
+                    ["depend", ["list", []]]
+                ]
+            }
+        }
+        '''
+        self.uconf.from_string(_schema)
         self._modules = {}
+
 
     async def module_list(self):
         await self.uconf.call("from_file", "./_conf/_mod.json")
@@ -97,49 +113,33 @@ class uModule:
 
         _mod_list = await self.uconf.call("scan_name", "board_mod")
 
-        for name_mod in _mod_list or []:
+        for name_mod in _mod_list:
             _mod = await self.uconf.call("select_one", "board_mod", name_mod, True)
 
-            log.info("Mod Name: {} - active:{}".format(_mod.name, _mod.active))
-
             if _mod.active:
+                log.info("Config: {}".format(_mod.name))
                 self._modules[_mod.name] = _mod.depend
                 await self.uconf.call("from_file", "./mod/{}/_schema.json".format(_mod.name))
-                log.info("SCH: Loaded")
-
 
 
     async def module_data(self):
         for _mod in self._modules.keys():
             await self.uconf.call("from_file", "./_conf/data_{}.json".format(_mod))
+            log.info("Data: {}".format(_mod))
 
 
 
     async def module_act(self):
 
         for _mod, depend in self._modules.items():
-
-            mod_act = None
-            log.info(" MOD: Activate: {} ".format(_mod))
-
-            # import module
-            m_path = "{}/mod/{}".format(self.core.part_name, _mod)
-            sys.path.append(m_path)
+            log.info("Activate: {} ".format(_mod))
+            m_path = "mod.{}._act_mod".format(_mod)
+            # activate module
             try:
-                import _act_mod as mod_act
-                del sys.modules["_act_mod"]
+                mod_act = __import__(m_path, None, None, ["_act_mod"], 0).init
+                del sys.modules[m_path]
+                mod_act(self.core, depend)
             except Exception as e:
                 log.error("MOD: {} - : {}".format(_mod, e))
                 pass
-            sys.path.remove(m_path)
-
-            # activate module
-            if mod_act:
-                try:
-                    mod_act.init(self.core, depend)
-                    log.info(" MOD: Done:     {}".format(_mod))
-                except Exception as e:
-                    log.error("MOD: {} - : {}".format(_mod, e))
-                    pass
-
-
+            gc.collect()

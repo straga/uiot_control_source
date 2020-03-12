@@ -112,7 +112,6 @@ class Store:
             cls.create_dir(_path)
 
 
-
     @staticmethod
     def default(default):
         if callable(default):
@@ -120,6 +119,9 @@ class Store:
         return default
 
 
+    @staticmethod
+    def str2bool(val):
+        return val.lower() in ("yes", "true", "1")
 
     @classmethod
     def validate(cls, cfg):
@@ -132,13 +134,19 @@ class Store:
             del cfg[k]
 
         for key, val in cls.__config__.items():
+
+            _type = getattr(builtins, val[0])
+
             if key not in cfg:
                 cfg[key] = cls.default(val[1])
 
-            elif type(cfg[key]) != val[0] and not callable(val[1]):
+            elif type(cfg[key]) != _type and not callable(val[1]):
 
                 try:
-                    cfg[key] = getattr(builtins, val[0])(cfg[key])
+                    if val[0] == "bool":
+                        cfg[key] = cls.str2bool(cfg[key])
+                    else:
+                        cfg[key] = _type(cfg[key])
                 except Exception as e:
                     log.error("VALIDATE:{}".format(e, ))
                     cfg[key] = cls.default(val[1])
@@ -172,19 +180,25 @@ class Store:
         if "name" in config:
 
             _name = config["name"]
+            _upd = None
+            if "_upd" in config:
+                _upd = config["_upd"]
 
             mode = False
             is_file = isfile(cls.path_to_config(_name))
+
             if not is_file:
                 mode = "w"
-
-            elif "_upd" in config and config["_upd"]:
+            elif _upd:
                 mode = "w+"
                 new_config = cls.select_one(_name)
                 if new_config:
                     del config["name"]
                     new_config.update(config)
                     config = new_config
+
+            if _upd is not None and not _upd:
+                mode = False
 
             log.debug("Mode: {},  path:{}".format(mode, cls.path_to_config(_name)))
 
@@ -241,3 +255,14 @@ class Store:
     def scan_store(cls):
         for file_name in cls.list_dir(cls.path_to_store()):
             yield file_name
+
+
+    @classmethod
+    def delete(cls, where):
+
+        _name = "name"
+
+        if len(where) == 1 and _name in where:
+            uos.remove(cls.path_to_config(where[_name]))
+            return True
+

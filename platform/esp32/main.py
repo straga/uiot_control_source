@@ -63,6 +63,8 @@ async def loader():
     print("Module: Act")
     await _umod.module_act()
 
+    _ = _thread.stack_size(4 * 1024)
+
 
 
 
@@ -93,6 +95,14 @@ if __name__ == '__main__':
     #
     # import ftp
     # ftp.ftpserver()
+
+
+    # from esp32 import Partition
+    # ota_0 = Partition('ota_0')
+    # Partition.set_boot(ota_0)
+
+    # import _thread
+    # _thread.stack_size(4 * 1024)
 
 
 

@@ -1,0 +1,17 @@
+{
+  "_sch_0": {
+    "_schema" : "_schema",
+    "name": "binary_sensor_cfg",
+    "sch": [
+              ["name", ["str",""] ],
+              ["pin", ["str", ""]],
+              ["trigger", ["str", null]],
+              ["priority", ["int", 1]],
+              ["wake", ["str", null]],
+              ["hard", ["bool", null]],
+              ["on", ["str", null]],
+              ["on_data", ["list", null]]
+    ]
+  }
+
+}

@@ -89,8 +89,9 @@ class MQTTConnect:
                 byte = await self.reader.read(1)
                 m_type = struct.unpack("!B", byte)[0]
                 m_raw = await self._read_packet()
-                await self.handler(m_type, m_raw)
                 log.debug("_msg_end: wait_msg: {}".format(m_raw))
+                await self.handler(m_type, m_raw)
+
             except Exception as e:
                 log.debug("Error1: wait_msg: {}".format(e))
                 await self.close()

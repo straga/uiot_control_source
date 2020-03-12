@@ -51,6 +51,9 @@ def main():
     loop = asyncio.get_event_loop()
     _ = _thread.stack_size(100 * 1024)
 
+    # loop.set_debug(True)
+    # logging.getLogger("asyncio").basicConfig(level=logging.DEBUG)
+
     # MBUS
     log.info("MBUS START")
     _mbus = MbusManager()
@@ -62,7 +65,6 @@ def main():
 
     _thread.start_new_thread(loop.run_forever, ())
 
-    # loop.set_debug(True)
     loop.create_task(loader(_mbus, _conf))
 
 

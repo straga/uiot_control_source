@@ -10,7 +10,10 @@ except Exception:
 
 import machine
 from core.loader.loader import uLoad
-from core.asyn.asyn import launch
+from core.u_os import uname, mem_info
+from esp32 import Partition
+
+# from core.asyn.asyn import launch
 
 class BoardAction(uLoad):
 
@@ -30,3 +33,24 @@ class BoardAction(uLoad):
             # self.mbus.pub_h("board/activate", board_id)
 
             self.mbus.pub_h("module", "board")
+
+            self.uname = uname
+            self.mem_info = mem_info
+
+    @staticmethod
+    def reboot(part=None):
+        if part:
+            _part = Partition(part)
+            Partition.set_boot(_part)
+        machine.reset()
+
+
+
+    @staticmethod
+    def get_part():
+
+        runningpart = Partition(Partition.RUNNING)
+        part_info = runningpart.info()
+        part_name = part_info[4]
+
+        return part_name

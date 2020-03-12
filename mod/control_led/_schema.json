@@ -1,0 +1,38 @@
+{
+
+  "pin_21": {
+    "_schema" : "pin_cfg",
+    "name": "21",
+    "number": 21,
+    "inverted": false,
+    "mode": "OUT",
+    "pcb_name": "LED_21"
+  },
+
+  "switch_21": {
+    "_schema" : "switch_cfg",
+    "name": "led_status",
+    "pin": "21"
+  },
+
+
+  "pin_19": {
+    "_schema" : "pin_cfg",
+    "name": "19",
+    "number": 19,
+    "inverted": false,
+    "mode": "IN",
+    "pull": "PULL_DOWN",
+    "pcb_name": "19"
+  },
+
+  "push_19": {
+    "_schema" : "binary_sensor_cfg",
+    "name": "push_right",
+    "pin": "19",
+    "on" : "state",
+    "trigger": "IRQ_FALLING"
+  }
+
+
+}

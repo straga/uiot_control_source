@@ -1,0 +1,237 @@
+.greeter {
+    font-size: 20px;
+    width: 300px;
+    height: 100px;
+    margin: 5px;
+    text-align: center;
+    line-height: 100px;
+    background-color: #eeeeee;
+    user-select: none;
+}
+
+
+.b20top { margin-top:20px; }
+
+
+.body-content { margin-top:30px; }
+
+.navbar-nav > li > a {
+    color: orange !important;
+}
+
+
+.navbar-nav.sub-screen-menu > li > a {
+    color: #59aaff !important;
+}
+
+.nav-item:active {
+    background-color: white;
+}
+
+
+.nav-item.active {
+   font-weight:bold;
+}
+
+.item_screen {
+    overflow: hidden;
+    text-align: left;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    height: 16px;
+    min-width: 50px;
+    font-size: 11px;
+    opacity:.9;
+}
+
+.name-screen {
+       display: inline-block;
+    vertical-align: middle;
+    float: none;
+
+}
+
+
+
+
+
+
+.wrapper {
+    display: block;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: -255px;
+    z-index: 999;
+    background: #4e4e4e;
+    color: #fff;
+    transition: all .3s;
+    box-shadow: 3px 3px 3px rgba(51, 51, 51, 0.5);
+    text-align: left;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+/***** Content *****/
+
+.content {
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.open-menu {
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    z-index: 997;
+    box-shadow: 3px 3px 3px rgba(51, 51, 51, 0.2);
+}
+
+/*.sidebar .logo {*/
+/*    padding: 40px 20px;*/
+/*    border-bottom: 1px solid #444;*/
+/*    transition: all .3s;*/
+/*}*/
+
+
+.sidebar ul.menu-elements {
+    padding: 10px 0;
+    border-bottom: 1px solid #444;
+    transition: all .3s;
+}
+
+.sidebar ul li a {
+    display: block;
+    padding: 10px 20px;
+    border: 0;
+    color: #fff;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a:focus,
+.sidebar ul li.active > a:hover,
+.sidebar ul li.active > a:focus {
+    outline: 0;
+    background: #555;
+    color: #fff;
+}
+
+.sidebar ul li a i {
+    margin-right: 5px;
+}
+
+.sidebar ul li.active > a,
+a[aria-expanded="true"] {
+    background: #444;
+    color: #fff;
+}
+
+.sidebar ul ul a {
+    background: #444;
+    padding-left: 30px;
+    font-size: 14px;
+}
+
+.sidebar ul ul li.active > a {
+    background: #555;
+}
+
+.sidebar a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.sidebar .dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+.sidebar .logo a {
+    display: inline-block;
+    width: 172px;
+    height: 34px;
+    /*background: url(../img/logo.png) left top no-repeat;*/
+    border: 0;
+    /*text-indent: -999999px;*/
+    color: lightgrey;
+}
+
+
+.open-menu {
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    z-index: 997;
+    box-shadow: 3px 3px 3px rgba(51, 51, 51, 0.2);
+}
+
+.open-menu.btn-customized,
+.open-menu.btn-customized:hover,
+.open-menu.btn-customized:active,
+.open-menu.btn-customized:focus,
+.open-menu.btn-customized:active:focus,
+.open-menu.btn-customized.active:focus,
+.open-menu.btn-customized.btn.btn-primary:not(:disabled):not(.disabled):active,
+.open-menu.btn-customized.btn.btn-primary:not(:disabled):not(.disabled):active:focus {
+    box-shadow: 3px 3px 3px rgba(51, 51, 51, 0.2);
+}
+
+/* Style for all buttons with the class btn-customized */
+
+a.btn-customized {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: .75rem 1.5rem;
+    background: #f35b3f;
+    border: 0;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 300;
+    color: #fff;
+    box-shadow: none;
+}
+
+a.btn-customized:hover,
+a.btn-customized:active,
+a.btn-customized:focus,
+a.btn-customized:active:focus,
+a.btn-customized.active:focus,
+a.btn-customized.btn.btn-primary:not(:disabled):not(.disabled):active,
+a.btn-customized.btn.btn-primary:not(:disabled):not(.disabled):active:focus {
+    outline: 0;
+    background: #cd533d; /* for browsers that don't recognize rgba */
+    background: rgba(243, 91, 63, 0.7);
+    border: 0;
+    color: #fff;
+    box-shadow: none;
+}
+
+
+
+.dismiss {
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transition: all .3s;
+    background: #4e4e4e;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 35px;
+    cursor: pointer;
+}
+
+.dismiss:hover,
+.dismiss:focus {
+    background: #4e4e4e;
+    color: #cd533d;
+}
