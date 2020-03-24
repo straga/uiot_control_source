@@ -27,5 +27,13 @@ class ControlAction(uLoad):
             switch = await switch_env.get_switch("led_status")
             switch.change_state(_pld)
 
+            mqtt_env = self.core.env("mqtt")
+            if mqtt_env:
+                mqtt_env.mqtt.pub(
+                                {"tp": "dev/kitchen_light/MQTT/light_control/light_status/set",
+                                 "msg": _pld,
+                                 "rt": False
+                                 })
+
 
 

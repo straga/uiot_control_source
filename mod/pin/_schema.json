@@ -5,10 +5,13 @@
     "sch": [
               ["name", ["str",""] ],
               ["number", ["int", 0] ],
-              ["inverted", ["bool", false]],
+              ["inverted", ["bool", null]],
               ["mode", ["str", null]],
               ["pull", ["str", null]],
-              ["pref", ["str", "null"]],
+              ["value", ["int", null]],
+              ["drive", ["str", null]],
+              ["alt", ["str", null]],
+              ["pref", ["str", null]],
               ["pcb_name", ["str", ""]]
     ]
   }

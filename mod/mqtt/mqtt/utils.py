@@ -21,10 +21,16 @@ def pack_variable_byte_integer(value):
     return remaining_bytes
 
 
-def pack_utf8(packet=bytearray(), data=''):
+# def pack_utf8(packet=bytearray(), data=''):
+#
+#     if isinstance(data, str):
+#         data = data.encode('utf-8')
+#     packet.extend(struct.pack("!H", len(data)))
+#     packet.extend(data)
+#     return packet
 
+def _pack_str16(packet, data):
     if isinstance(data, str):
         data = data.encode('utf-8')
     packet.extend(struct.pack("!H", len(data)))
     packet.extend(data)
-    return packet

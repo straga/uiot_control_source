@@ -20,7 +20,6 @@
     "_schema" : "pin_cfg",
     "name": "19",
     "number": 19,
-    "inverted": false,
     "mode": "IN",
     "pull": "PULL_DOWN",
     "pcb_name": "19"

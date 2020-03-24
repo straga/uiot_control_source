@@ -14,19 +14,26 @@ except Exception:
 
 import logging
 log = logging.getLogger("MQTT")
+log.setLevel(logging.INFO)
 
+from .package import MQTTPacket
 from .handler import MQTTHandler
-from .utils import pack_variable_byte_integer, pack_utf8
+
+
+
+from core.asyn.asyn import Lock
+
 
 class MQTTConnect:
 
-    def __init__(self, client_id="", addr=None, port=1883, keepalive=0, ping_interval=20, cb=None):
+    def __init__(self, client_id="", addr=None, port=1883, keepalive=40, ping_interval=20, cb=None):
 
         self.client_id = client_id
         self.addr = addr
         self.port = port
         self.keepalive = keepalive
         self.ping_interval = ping_interval
+
         self.proto_name = b'MQTT'
         self.proto_ver = 4  #MQTTv311 = 4
 
@@ -34,6 +41,10 @@ class MQTTConnect:
         self.reader = None
         self.handler = None
         self.client = None
+        self.username = None
+        self.password = None
+
+        self.lock = Lock()
 
         self.cb = cb
 
@@ -41,7 +52,7 @@ class MQTTConnect:
         self.broker_status = 0
 
     def set_handler(self, client):
-        self.handler = MQTTHandler(self, client).handler
+        self.handler = MQTTHandler(connect=self, client=client).handler
 
 
     async def create_connect(self, clean):
@@ -56,48 +67,38 @@ class MQTTConnect:
             log.debug("ERROR open connect: {}".format(e))
             return
 
+        packet = MQTTPacket.login(client_id=self.client_id, username=self.username, password=self.password,
+                                  clean_session=True, keepalive=self.keepalive,
+                                  protocol={"name": self.proto_name, "ver": self.proto_ver})
 
-        # MQTT Commands CONNECT
-        command = 0x10
-        remaining_length = 2 + len(self.proto_name) + 1 + 1 + 2 + 2 + len(self.client_id)
+        async with self.lock:
+            await _awrite(self.writer, packet, True)
 
-        connect_flags = 0
-        if clean:
-            connect_flags |= 0x02 #clean session
-
-        packet = bytearray()
-        packet.append(command)
-
-        packet.extend(pack_variable_byte_integer(remaining_length))
-        packet.extend(struct.pack("!H" + str(len(self.proto_name)) + "sBBH",
-                                  len(self.proto_name),
-                                  self.proto_name,
-                                  self.proto_ver,
-                                  connect_flags,
-                                  self.keepalive))
-
-        packet = pack_utf8(packet, self.client_id)
-
-        await _awrite(self.writer, packet, True)
 
 
     async def _wait_msg(self):
-
         while self.reader:
             try:
-                log.debug("_msg_start: wait_msg: {}")
                 byte = await self.reader.read(1)
+                if byte is None:
+                    return
+                if byte == b'':
+                    raise OSError(-1)
+
                 m_type = struct.unpack("!B", byte)[0]
+                log.debug("   -: m_type: {}".format(m_type))
+
                 m_raw = await self._read_packet()
-                log.debug("_msg_end: wait_msg: {}".format(m_raw))
+                log.debug("   -: m_raw: {}".format(m_raw))
+
                 await self.handler(m_type, m_raw)
 
             except Exception as e:
                 log.debug("Error1: wait_msg: {}".format(e))
                 await self.close()
-                pass
 
-            await asyncio.sleep(0.3)
+            await asyncio.sleep(0.5)
+
 
 
     async def _read_packet(self):

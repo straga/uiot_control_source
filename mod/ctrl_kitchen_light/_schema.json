@@ -1,0 +1,20 @@
+{
+
+  "pin_18": {
+    "_schema" : "pin_cfg",
+    "name": "18",
+    "number": 18,
+    "inverted": true,
+    "mode": "OUT",
+    "value": 1,
+    "pcb_name": "LED_18"
+  },
+
+  "switch_21": {
+    "_schema" : "switch_cfg",
+    "name": "led_status",
+    "pin": "18"
+  }
+
+
+}

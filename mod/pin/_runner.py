@@ -26,16 +26,27 @@ class PinAction(uLoad):
             pin_obj = await self.uconf.call("select_one", "pin_cfg", pin_name, obj=True)
 
             if pin_obj:
+                _kwargs = {}
 
-                if pin_obj.mode == "OUT":
-                    hw_pin = Pin(pin_obj.number, mode=getattr(Pin, pin_obj.mode))
-                    pin = Signal(hw_pin, invert=pin_obj.inverted)
-                elif pin_obj.mode == "IN":
-                    pin = Pin(pin_obj.number, mode=getattr(Pin, pin_obj.mode), pull=getattr(Pin, pin_obj.pull))
+                if pin_obj.mode:
+                    _kwargs["mode"] = getattr(Pin, pin_obj.mode)
+                if pin_obj.pull:
+                    _kwargs["pull"] = getattr(Pin, pin_obj.pull)
+                if pin_obj.value is not None:
+                    _kwargs["value"] = pin_obj.value
+                if pin_obj.drive:
+                    _kwargs["drive"] = getattr(Pin, pin_obj.drive)
+                if pin_obj.alt:
+                    _kwargs["alt"] = getattr(Pin, pin_obj.alt)
+
+                pin = Pin(pin_obj.number, **_kwargs)
 
                 if pin:
-                    self.mbus.pub_h("pin/{}/init".format(pin_obj.name), [pin_obj.number, pin_obj.mode, pin_obj.pull])
+                    if pin_obj.inverted is not None:
+                        pin = Signal(pin, invert=pin_obj.inverted)
                     self.pin_list[pin_obj.name] = pin
+                    self.mbus.pub_h("pin/{}/init".format(pin_obj.name), [pin_obj.number, pin_obj.mode, pin_obj.pull])
+
 
         return pin
 

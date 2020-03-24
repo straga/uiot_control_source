@@ -128,37 +128,37 @@ class MbusManager:
 
         return self.sub(uid, {"id": topic, "env": env, "func": func})
 
-    async def consumer(self):
-
-        while True:
-            message = await self.queue.get()
-            if message:
-                log.debug("[GET] msg: {}".format(message))
-                self.sub_check(message)
-
-            else:
-                await asyncio.sleep(0.5)
-
     # async def consumer(self):
     #
     #     while True:
     #         message = await self.queue.get()
     #         if message:
     #             log.debug("[GET] msg: {}".format(message))
+    #             self.sub_check(message)
     #
-    #             try:
-    #                 br_func = getattr(self, message["brk"])
-    #             except Exception as e:
-    #                 log.debug("Error: getattr: {}".format(e))
-    #                 br_func = None
-    #                 pass
-    #
-    #             if br_func:
-    #                 self.sub_check(br_func(message))
-    #             else:
-    #                 self.sub_check(message)
     #         else:
     #             await asyncio.sleep(0.5)
+
+    async def consumer(self):
+
+        while True:
+            message = await self.queue.get()
+            if message:
+                log.debug("[GET] msg: {}".format(message))
+
+                try:
+                    br_func = getattr(self, message["brk"])
+                except Exception as e:
+                    log.debug("Error: getattr: {}".format(e))
+                    br_func = None
+                    pass
+
+                if br_func:
+                    self.sub_check(br_func(message))
+                else:
+                    self.sub_check(message)
+            else:
+                await asyncio.sleep(0.5)
 
     def usub(self, value):
         self._usub.append(value)

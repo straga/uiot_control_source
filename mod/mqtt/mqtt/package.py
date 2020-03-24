@@ -12,44 +12,43 @@ except Exception:
     pass
 
 
-
 import logging
 log = logging.getLogger("MQTT")
 
-from .handler import MQTTHandler
-from .utils import pack_variable_byte_integer, pack_utf8
+from .utils import pack_variable_byte_integer, _pack_str16
+
 
 class MQTTPacket:
-
-    def __init__(self, client):
-        self.client = client
 
     @staticmethod
     def ping():
         # command = 0xC0 #11000000 PINGREQ
         return struct.pack('!BB', 0xC0, 0)
 
+    @staticmethod
+    def subscribe(sbt, mid=0):
 
-    def subscribe(self, topic, qos=0):
-
-        self.client.newpid()
-        command = 0x80 #10000000
-        command = command | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0 # + 0010
-
+        command = 0x80 ##SUBSCRIBE fixed header 0x80 + 0010 reserved
+        command = command | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0
         remaining_length = 2
-        remaining_length += 2 + len(topic) + 1
+
+        topics = []
+        for topic in sbt:
+            remaining_length += 2 + len(topic) + 1
+            topics.append(topic)
 
         packet = bytearray()
         packet.append(command)
         packet.extend(pack_variable_byte_integer(remaining_length))
-        packet.extend(struct.pack("!H", self.client.pid))
-        packet = pack_utf8(packet, topic)
+        packet.extend(struct.pack("!H", mid))
 
-        subscribe_options = 0 << 3 | 0 << 2 | 0 << 1 | qos << 0
-        #subscribe_options = retain_handling_options << 4 | retain_as_published << 3 | no_local << 2 | qos - 2.3.1 Packet Identifier
-        packet.append(subscribe_options)
+        for topic in sbt:
+            _pack_str16(packet, topic)
+            # topic.retain_handling_options | topic.retain_as_published | topic.no_local | topic.qos
+            subscribe_options = 0 << 3 | 0 << 2 | 0 << 1 | 0 << 0
+            packet.append(subscribe_options)
 
-        log.debug("[SUBSCRIBE] topic: {} ,packet: {}".format(topic, packet))
+        log.debug("[SUBSCRIBE] mid: {},  topic: {} ,packet: {}".format(mid, topics, packet))
 
         return packet
 
@@ -63,9 +62,59 @@ class MQTTPacket:
         packet.append(command)
         remaining_length = 2 + len(msg.topic) + msg.pld_size
         packet.extend(pack_variable_byte_integer(remaining_length))
-        packet = pack_utf8(packet, msg.topic)
+        _pack_str16(packet, msg.topic)
         packet.extend(msg.pld)
 
         log.debug("[PUBLISH] topic: {} , msg: {} ,packet: {}".format(msg.topic, msg.pld, packet))
 
         return packet
+
+
+
+    @staticmethod
+    def login(client_id, username, password, clean_session, keepalive, protocol, will_message=None, **kwargs):
+        # MQTT Commands CONNECT
+        proto_name = protocol["name"]
+        proto_ver = protocol["ver"]
+        command = 0x10
+        remaining_length = 2 + len(proto_name) + 1 + 1 + 2 + 2 + len(client_id)
+
+        connect_flags = 0
+        if clean_session:
+            connect_flags |= 0x02 #clean session
+
+        #will_message
+
+
+        #user
+        if username is not None:
+            remaining_length += 2 + len(username)
+            connect_flags |= 0x80
+            if password is not None:
+                connect_flags |= 0x40
+                remaining_length += 2 + len(password)
+
+
+        packet = bytearray()
+        packet.append(command)
+
+        packet.extend(pack_variable_byte_integer(remaining_length))
+        packet.extend(struct.pack("!H" + str(len(proto_name)) + "sBBH",
+                                  len(proto_name),
+                                  proto_name,
+                                  proto_ver,
+                                  connect_flags,
+                                  keepalive))
+
+        _pack_str16(packet, client_id)
+
+        #will message
+
+        if username is not None:
+            _pack_str16(packet, username)
+
+            if password is not None:
+                _pack_str16(packet, password)
+
+        return packet
+

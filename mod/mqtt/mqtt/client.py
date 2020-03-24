@@ -19,7 +19,6 @@ log.setLevel(logging.INFO)
 from .package import MQTTPacket
 from .connection import MQTTConnect
 from .message import MQTTMessage
-from .utils import pack_variable_byte_integer, pack_utf8
 
 
 class MQTTClient:
@@ -30,17 +29,17 @@ class MQTTClient:
     def __init__(self, client_id, addr, port):
 
         self.connect = MQTTConnect(client_id, addr, port)
-        self.packet = MQTTPacket(self)
-
-        self.pid = 0
         self.cb = None
 
-        self.sbt = None
+        self.sbt = []
         self.mpub = []
-
+        self.pid = 0
         self.fail = 0
         self._run = False
 
+
+    def add_sbt(self, tpc):
+        self.sbt.append(tpc)
 
     def newpid(self):
         return self.pid + 1 if self.pid < 65535 else 1
@@ -53,8 +52,9 @@ class MQTTClient:
     async def sbt_subscribe(self):
         log.info('[SUB TPC] : {}'.format(self.sbt))
         if self.sbt:
-            packet = self.packet.subscribe(self.sbt)
-            await _awrite(self.connect.writer, packet, True)
+            packet = MQTTPacket.subscribe(self.sbt, self.newpid())
+            async with self.connect.lock:
+                await _awrite(self.connect.writer, packet, True)
 
 
     def pub(self, value):
@@ -63,17 +63,17 @@ class MQTTClient:
 
     async def task_ping_msg(self):
         while self._run:
-            log.debug("[FAIL] {}, brocker: {}".format(self.fail, self.connect.broker_status))
+            log.debug("[FAIL] {}, con status: {}".format(self.fail, self.connect.broker_status))
             if self.connect.broker_status:
-                packet = self.packet.ping()
-                await _awrite(self.connect.writer, packet, True)
+                packet = MQTTPacket.ping()
+                async with self.connect.lock:
+                    await _awrite(self.connect.writer, packet, True)
 
             if self.fail > 3:
                 self.fail = 0
                 await self.close()
 
             self.fail += 1
-
 
             await asyncio.sleep(self.connect.ping_interval)
 
@@ -84,8 +84,9 @@ class MQTTClient:
                 val = self.mpub.pop(0)
                 if self.connect.broker_status:
                     msg = MQTTClient.Message(val["tp"], val["msg"], val["rt"] if "rt" in val else False)
-                    packet = self.packet.publish(msg)
-                    await _awrite(self.connect.writer, packet, True)
+                    packet = MQTTPacket.publish(msg)
+                    async with self.connect.lock:
+                        await _awrite(self.connect.writer, packet, True)
             await asyncio.sleep(0.3)
 
 

@@ -4,7 +4,6 @@
     "_schema" : "pin_cfg",
     "name": "18",
     "number": 18,
-    "inverted": false,
     "mode": "IN",
     "pull": "PULL_DOWN",
     "pcb_name": "18"
@@ -22,7 +21,6 @@
     "_schema" : "pin_cfg",
     "name": "23",
     "number": 23,
-    "inverted": false,
     "mode": "IN",
     "pull": "PULL_DOWN",
     "pcb_name": "23"
