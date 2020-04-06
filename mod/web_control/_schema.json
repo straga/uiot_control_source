@@ -1,0 +1,11 @@
+{
+  "web_ctrl_host": {
+    "_schema" : "_schema",
+    "name": "web_ctrl_host",
+    "sch": [
+        ["name", ["str",""] ],
+        ["addr", ["str", ""] ],
+        ["port", ["int", 8080]]
+    ]
+  }
+}

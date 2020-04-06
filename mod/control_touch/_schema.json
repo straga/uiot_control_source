@@ -31,6 +31,24 @@
     "name": "push_period",
     "pin": "23",
     "on" : "period"
+  },
+
+
+  "pin_19": {
+    "_schema" : "pin_cfg",
+    "name": "19",
+    "number": 19,
+    "mode": "IN",
+    "pull": "PULL_DOWN",
+    "pcb_name": "19"
+  },
+
+  "push_19": {
+    "_schema" : "binary_sensor_cfg",
+    "name": "push_right",
+    "pin": "19",
+    "on" : "state",
+    "trigger": "IRQ_FALLING"
   }
 
 

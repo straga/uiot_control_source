@@ -38,6 +38,19 @@ class MQTTAction(uLoad):
             #MQTT playload decoder
             self.core.mbus.MQTT = self.MQTT_decode
 
+            if mqtt_cfg.lwt:
+                self.mqtt.connect.will_message = {
+                        "tp": "{}/status".format(self.client_pub),
+                        "msg": "offline",
+                        "rt": True
+                       }
+            if mqtt_cfg.birth:
+                self.mqtt.connect.birth_message = {
+                        "tp": "{}/status".format(self.client_pub),
+                        "msg": "online",
+                        "rt": True
+                       }
+
             self.mqtt.start()
             self.mbus.pub_h("module", "mqtt")
 

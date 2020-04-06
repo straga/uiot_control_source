@@ -84,6 +84,10 @@ class MQTTPacket:
             connect_flags |= 0x02 #clean session
 
         #will_message
+        if will_message:
+            qos = 0
+            remaining_length += 2 + len(will_message["tp"]) + 2 + len(will_message["msg"])
+            connect_flags |= 0x04 | ((qos & 0x03) << 3) | ((will_message["rt"] & 0x01) << 5)
 
 
         #user
@@ -108,7 +112,9 @@ class MQTTPacket:
 
         _pack_str16(packet, client_id)
 
-        #will message
+        if will_message:
+            _pack_str16(packet, will_message["tp"])
+            _pack_str16(packet, will_message["msg"])
 
         if username is not None:
             _pack_str16(packet, username)

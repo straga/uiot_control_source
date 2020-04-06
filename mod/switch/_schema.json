@@ -5,8 +5,9 @@
     "sch": [
               ["name", ["str",""] ],
               ["pin", ["str", ""]],
-              ["state", ["str", ""]],
-              ["type", ["str", ""]]
+              ["state", ["int", null]],
+              ["restore", ["str", null]],
+              ["type", ["str", null]]
     ]
   }
 

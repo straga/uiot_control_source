@@ -4,6 +4,8 @@ import logging
 log = logging.getLogger("SWITCH")
 log.setLevel(logging.INFO)
 
+from core.asyn.asyn import launch
+
 from .switch import Switch
 
 class SwitchAction(uLoad):
@@ -35,11 +37,31 @@ class SwitchAction(uLoad):
                     self.mbus.pub_h("switch/{}/init".format(switch_obj.name), [switch_obj.pin])
                     self.sw_list[switch_obj.name] = switch
 
+                    #Restore mode
+                    if switch_obj.restore is not None:
+                        if switch_obj.restore == "ON":
+                            switch.change_state(1)
+                        elif switch_obj.restore == "OFF":
+                            switch.change_state(0)
+                        elif switch_obj.restore == "STATE":
+                            switch.restore = True
+                            switch.change_state(switch_obj.state)
+
         return switch
 
+    async def save_stage(self, switch):
+        switch_obj = await self.uconf.call("select_one", "switch_cfg", switch.name, obj=True)
+        switch_obj.state = switch.state
+        await switch_obj.update()
 
     def cb(self, sw):
-        self.mbus.pub_h("switch/{}/state".format(sw.name), sw.get_state())
+        self.mbus.pub_h("switch/{}/state".format(sw.name), sw.get_state(), retain=True)
+        if sw.restore:
+            launch(self.save_stage, (sw,))
+
+
+
+
 
 
 

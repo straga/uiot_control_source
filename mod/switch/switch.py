@@ -12,22 +12,26 @@ class Switch:
         self.pin = pin
         self.cb = None
         self.state = None
+        self.restore = None
 
 
     def get_state(self):
-        self.state = self.pin.value()
-        return self.state
+        return self.pin.value()
+
 
     def change_state(self, _set=None):
 
         if _set is not None:
-            self.pin.value(_set)
+            if isinstance(_set, int):
+                self.pin.value(_set)
+        elif _set == -1:
+            self.pin.value(self.state)
         else:
             self.pin.value(1 - self.pin.value())
 
-        self.state = self.pin.value()
+        state = self.pin.value()
         if self.cb:
             self.cb(self)
-        return self.state
+        return state
 
 

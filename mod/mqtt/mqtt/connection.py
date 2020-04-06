@@ -26,7 +26,7 @@ from core.asyn.asyn import Lock
 
 class MQTTConnect:
 
-    def __init__(self, client_id="", addr=None, port=1883, keepalive=40, ping_interval=20, cb=None):
+    def __init__(self, client_id="", addr=None, port=1883, keepalive=60, ping_interval=20):
 
         self.client_id = client_id
         self.addr = addr
@@ -43,10 +43,10 @@ class MQTTConnect:
         self.client = None
         self.username = None
         self.password = None
+        self.will_message = None
+        self.birth_message = None
 
         self.lock = Lock()
-
-        self.cb = cb
 
         self.open_status = 0
         self.broker_status = 0
@@ -68,7 +68,7 @@ class MQTTConnect:
             return
 
         packet = MQTTPacket.login(client_id=self.client_id, username=self.username, password=self.password,
-                                  clean_session=True, keepalive=self.keepalive,
+                                  clean_session=True, keepalive=self.keepalive, will_message=self.will_message,
                                   protocol={"name": self.proto_name, "ver": self.proto_ver})
 
         async with self.lock:

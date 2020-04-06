@@ -21,6 +21,7 @@ class ControlAction(uLoad):
         #Activate sensor buttons
         await binary_sensor.get_binary("push_left")
         await binary_sensor.get_binary("push_period")
+        await binary_sensor.get_binary("push_right")
 
         self.mbus.pub_h("module", "control_touch")
         switch_env = self.core.env("switch")
@@ -30,8 +31,11 @@ class ControlAction(uLoad):
 
     async def binary_sensor_act(self, _id, _key, _pld, _rt):
 
+        # MQTT
         led = "dev/kitchen_light/MQTT/light_control/light_status/set"
+        mqtt_env = self.core.env("mqtt")
 
+        # Touch
         if _id == "binary_sensor/push_left" and _key == "touch":
 
             pld = 0
@@ -40,15 +44,11 @@ class ControlAction(uLoad):
 
             self.switch.change_state(pld)
 
-            mqtt_env = self.core.env("mqtt")
-
             if mqtt_env:
                 mqtt_env.mqtt.pub({"tp": led,"msg": pld,"rt": False })
 
-
+        # Period
         elif _id == "binary_sensor/push_period" and _key == "period":
-
-            mqtt_env = self.core.env("mqtt")
 
             if mqtt_env:
                 mqtt_env.mqtt.pub({"tp": led, "msg": 1, "rt": False})
@@ -62,5 +62,10 @@ class ControlAction(uLoad):
 
             self.switch.change_state(0)
 
+        # State
+        elif _id == "binary_sensor/push_right" and _key == "state":
 
+            if mqtt_env and self.switch:
 
+                mqtt_env.mqtt.pub({"tp": led, "msg": 1-self.switch.get_state(), "rt": False})
+                self.switch.change_state()

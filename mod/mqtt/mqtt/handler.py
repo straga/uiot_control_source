@@ -38,6 +38,8 @@ class MQTTHandler:
                 self.connect.broker_status = 1
                 self.client.fail = 0
                 await self.client.sbt_subscribe()
+                if self.connect.birth_message:
+                    self.client.pub(self.connect.birth_message)
             else:
                 log.info('Disconnected')
                 await self.client.close()
